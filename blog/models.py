@@ -49,18 +49,18 @@ class Post(models.Model):
         related_name='posts',
         verbose_name='Теги')
 
-    def __str__(self):
-        return self.title
-
     objects = PostQuerySet.as_manager()
-
-    def get_absolute_url(self):
-        return reverse('post_detail', args={'slug': self.slug})
 
     class Meta:
         ordering = ['-published_at']
         verbose_name = 'пост'
         verbose_name_plural = 'посты'
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args={'slug': self.slug})
 
 
 class TagQuerySet(models.QuerySet):
@@ -77,19 +77,19 @@ class Tag(models.Model):
 
     objects = TagQuerySet.as_manager()
 
-    def __str__(self):
-        return self.title
-
-    def clean(self):
-        self.title = self.title.lower()
-
-    def get_absolute_url(self):
-        return reverse('tag_filter', args={'tag_title': self.slug})
-
     class Meta:
         ordering = ['title']
         verbose_name = 'тег'
         verbose_name_plural = 'теги'
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('tag_filter', args={'tag_title': self.slug})
+
+    def clean(self):
+        self.title = self.title.lower()
 
 
 class Comment(models.Model):
@@ -106,10 +106,11 @@ class Comment(models.Model):
     text = models.TextField('Текст комментария')
     published_at = models.DateTimeField('Дата и время публикации')
 
-    def __str__(self):
-        return f'{self.author.username} under {self.post.title}'
-
     class Meta:
         ordering = ['published_at']
         verbose_name = 'комментарий'
         verbose_name_plural = 'комментарии'
+
+    def __str__(self):
+        return f'{self.author.username} under {self.post.title}'
+
